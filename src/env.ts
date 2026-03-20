@@ -26,7 +26,6 @@ export function getEnvVariables() {
         if (line.includes('ANTHROPIC_CUSTOM_HEADERS')) vars.ANTHROPIC_CUSTOM_HEADERS = line.split('REG_SZ')[1]?.trim() || vars.ANTHROPIC_CUSTOM_HEADERS;
       }
     } catch (e) {
-      // Failed to read from registry
     }
   } else {
     const home = os.homedir();
@@ -43,12 +42,58 @@ export function getEnvVariables() {
             if (line.startsWith('export ANTHROPIC_CUSTOM_HEADERS=')) vars.ANTHROPIC_CUSTOM_HEADERS = line.split('=')[1].replace(/"/g, '').trim();
           }
         } catch (e) {
-          // Failed to read RC file
         }
       }
     }
   }
   return vars;
+}
+
+export async function deleteEnvVariables(keys: string[]) {
+  const platform = os.platform();
+  const errors: string[] = [];
+
+  if (platform === 'win32') {
+    for (const key of keys) {
+      try {
+        await execAsync(`reg delete "HKCU\\Environment" /v ${key} /f`);
+      } catch (e: any) {
+      }
+    }
+  } else {
+    const home = os.homedir();
+    const rcFiles = [
+      path.join(home, '.zshrc'),
+      path.join(home, '.zshenv'),
+      path.join(home, '.bashrc'),
+      path.join(home, '.bash_profile')
+    ];
+
+    for (const file of rcFiles) {
+      if (fs.existsSync(file)) {
+        try {
+          let content = fs.readFileSync(file, 'utf8');
+          let changed = false;
+
+          for (const key of keys) {
+            const regex = new RegExp(`^export ${key}=.*$`, 'gm');
+            if (regex.test(content)) {
+              content = content.replace(regex, '');
+              changed = true;
+            }
+          }
+
+          if (changed) {
+            content = content.replace(/\n\s*\n/g, '\n\n').trim() + '\n';
+            fs.writeFileSync(file, content);
+          }
+        } catch (e: any) {
+          errors.push(`Failed to update ${file}: ${e.message}`);
+        }
+      }
+    }
+  }
+  return { success: errors.length === 0, errors };
 }
 
 export async function setEnvVariables(vars: Record<string, string>) {

@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
 import { loadConfig, saveConfig } from './config';
-import { setEnvVariables, getEnvVariables } from './env';
+import { setEnvVariables, getEnvVariables, deleteEnvVariables } from './env';
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -36,6 +36,7 @@ app.whenReady().then(() => {
   });
 
   ipcMain.handle('set-env', async (event, vars) => await setEnvVariables(vars));
+  ipcMain.handle('delete-env', async (event, keys) => await deleteEnvVariables(keys));
 
   ipcMain.handle('fetch-models', async (event, { baseUrl, authToken, customHeaders }) => {
     try {

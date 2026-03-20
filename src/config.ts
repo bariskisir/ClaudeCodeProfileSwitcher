@@ -93,7 +93,6 @@ export function saveConfig(providers: Provider[]): void {
   try {
     currentContent = fs.readFileSync(configPath, 'utf8');
   } catch (e) {
-    // File might not exist
   }
 
   if (currentContent !== newContent) {

@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('api', {
   getEnv: () => ipcRenderer.invoke('get-env'),
   saveProvider: (providerData: any) => ipcRenderer.invoke('save-provider', providerData),
   setEnv: (vars: any) => ipcRenderer.invoke('set-env', vars),
+  deleteEnv: (keys: string[]) => ipcRenderer.invoke('delete-env', keys),
   fetchModels: (data: any) => ipcRenderer.invoke('fetch-models', data),
   closeWindow: () => ipcRenderer.invoke('close-window')
 });

@@ -28,6 +28,7 @@ interface Window {
     getEnv: () => Promise<Record<string, string>>;
     saveProvider: (providerData: Provider) => Promise<boolean>;
     setEnv: (vars: Record<string, string>) => Promise<{ success: boolean; errors?: string[] }>;
+    deleteEnv: (keys: string[]) => Promise<{ success: boolean; errors?: string[] }>;
     fetchModels: (data: { baseUrl: string; authToken: string; customHeaders: string }) => Promise<any>;
     closeWindow: () => void;
   };
@@ -61,6 +62,7 @@ const ui = {
   headersInput: document.getElementById('headersInput') as HTMLInputElement,
   modelLoading: document.getElementById('modelLoading') as HTMLElement,
   loadBtn: document.getElementById('loadBtn') as HTMLButtonElement,
+  resetBtn: document.getElementById('resetBtn') as HTMLButtonElement,
   statusMessage: document.getElementById('statusMessage') as HTMLElement,
   modelInfo: document.getElementById('modelInfo') as HTMLElement,
   infoContext: document.getElementById('infoContext') as HTMLElement,
@@ -454,6 +456,43 @@ ui.loadBtn.addEventListener('click', async () => {
   } finally {
     btn.disabled = false;
     setTimeout(() => { if (btn.textContent === 'SAVING...') btn.textContent = 'Save Profile'; }, 500);
+  }
+});
+
+ui.resetBtn.addEventListener('click', async () => {
+  const btn = ui.resetBtn;
+  btn.disabled = true;
+
+  const keys = [
+    'ANTHROPIC_BASE_URL',
+    'ANTHROPIC_MODEL',
+    'ANTHROPIC_AUTH_TOKEN',
+    'ANTHROPIC_CUSTOM_HEADERS'
+  ];
+
+  try {
+    const res = await window.api.deleteEnv(keys);
+
+    if (res.success) {
+      showStatus('Profile is reset', 'success');
+      ui.activeEnvLabel.classList.add('hidden');
+      
+      ui.baseUrlInput.value = '';
+      ui.modelSearch.value = '';
+      ui.tokenInput.value = '';
+      ui.headersInput.value = '';
+      ui.providerSearch.value = '';
+      ui.modelInfo.classList.add('hidden');
+      currentProvider = null;
+      models = [];
+    } else {
+      const errs = res.errors ? res.errors.join(' | ') : 'Unknown error';
+      showStatus('Error: ' + errs.substring(0, 30), 'error');
+    }
+  } catch (e: any) {
+    showStatus('Network error: ' + e.message.substring(0, 20), 'error');
+  } finally {
+    btn.disabled = false;
   }
 });
 
