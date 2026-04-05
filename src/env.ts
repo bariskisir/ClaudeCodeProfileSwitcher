@@ -10,6 +10,10 @@ export function getEnvVariables() {
   const vars = {
     ANTHROPIC_BASE_URL: process.env.ANTHROPIC_BASE_URL || '',
     ANTHROPIC_MODEL: process.env.ANTHROPIC_MODEL || '',
+    ANTHROPIC_DEFAULT_HAIKU_MODEL: process.env.ANTHROPIC_DEFAULT_HAIKU_MODEL || '',
+    ANTHROPIC_DEFAULT_SONNET_MODEL: process.env.ANTHROPIC_DEFAULT_SONNET_MODEL || '',
+    ANTHROPIC_DEFAULT_OPUS_MODEL: process.env.ANTHROPIC_DEFAULT_OPUS_MODEL || '',
+    ANTHROPIC_API_KEY: '',
     ANTHROPIC_AUTH_TOKEN: process.env.ANTHROPIC_AUTH_TOKEN || '',
     ANTHROPIC_CUSTOM_HEADERS: process.env.ANTHROPIC_CUSTOM_HEADERS || ''
   };
@@ -22,6 +26,9 @@ export function getEnvVariables() {
       for (const line of lines) {
         if (line.includes('ANTHROPIC_BASE_URL')) vars.ANTHROPIC_BASE_URL = line.split('REG_SZ')[1]?.trim() || vars.ANTHROPIC_BASE_URL;
         if (line.includes('ANTHROPIC_MODEL')) vars.ANTHROPIC_MODEL = line.split('REG_SZ')[1]?.trim() || vars.ANTHROPIC_MODEL;
+        if (line.includes('ANTHROPIC_DEFAULT_HAIKU_MODEL')) vars.ANTHROPIC_DEFAULT_HAIKU_MODEL = line.split('REG_SZ')[1]?.trim() || vars.ANTHROPIC_DEFAULT_HAIKU_MODEL;
+        if (line.includes('ANTHROPIC_DEFAULT_SONNET_MODEL')) vars.ANTHROPIC_DEFAULT_SONNET_MODEL = line.split('REG_SZ')[1]?.trim() || vars.ANTHROPIC_DEFAULT_SONNET_MODEL;
+        if (line.includes('ANTHROPIC_DEFAULT_OPUS_MODEL')) vars.ANTHROPIC_DEFAULT_OPUS_MODEL = line.split('REG_SZ')[1]?.trim() || vars.ANTHROPIC_DEFAULT_OPUS_MODEL;
         if (line.includes('ANTHROPIC_AUTH_TOKEN')) vars.ANTHROPIC_AUTH_TOKEN = line.split('REG_SZ')[1]?.trim() || vars.ANTHROPIC_AUTH_TOKEN;
         if (line.includes('ANTHROPIC_CUSTOM_HEADERS')) vars.ANTHROPIC_CUSTOM_HEADERS = line.split('REG_SZ')[1]?.trim() || vars.ANTHROPIC_CUSTOM_HEADERS;
       }
@@ -38,6 +45,9 @@ export function getEnvVariables() {
           for (const line of lines) {
             if (line.startsWith('export ANTHROPIC_BASE_URL=')) vars.ANTHROPIC_BASE_URL = line.split('=')[1].replace(/"/g, '').trim();
             if (line.startsWith('export ANTHROPIC_MODEL=')) vars.ANTHROPIC_MODEL = line.split('=')[1].replace(/"/g, '').trim();
+            if (line.startsWith('export ANTHROPIC_DEFAULT_HAIKU_MODEL=')) vars.ANTHROPIC_DEFAULT_HAIKU_MODEL = line.split('=')[1].replace(/"/g, '').trim();
+            if (line.startsWith('export ANTHROPIC_DEFAULT_SONNET_MODEL=')) vars.ANTHROPIC_DEFAULT_SONNET_MODEL = line.split('=')[1].replace(/"/g, '').trim();
+            if (line.startsWith('export ANTHROPIC_DEFAULT_OPUS_MODEL=')) vars.ANTHROPIC_DEFAULT_OPUS_MODEL = line.split('=')[1].replace(/"/g, '').trim();
             if (line.startsWith('export ANTHROPIC_AUTH_TOKEN=')) vars.ANTHROPIC_AUTH_TOKEN = line.split('=')[1].replace(/"/g, '').trim();
             if (line.startsWith('export ANTHROPIC_CUSTOM_HEADERS=')) vars.ANTHROPIC_CUSTOM_HEADERS = line.split('=')[1].replace(/"/g, '').trim();
           }

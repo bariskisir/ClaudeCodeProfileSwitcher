@@ -425,6 +425,10 @@ ui.loadBtn.addEventListener('click', async () => {
   const payload = {
     ANTHROPIC_BASE_URL: ui.baseUrlInput.value,
     ANTHROPIC_MODEL: ui.modelSearch.value || '',
+    ANTHROPIC_DEFAULT_HAIKU_MODEL: ui.modelSearch.value || '',
+    ANTHROPIC_DEFAULT_SONNET_MODEL: ui.modelSearch.value || '',
+    ANTHROPIC_DEFAULT_OPUS_MODEL: ui.modelSearch.value || '',
+    ANTHROPIC_API_KEY: '',
     ANTHROPIC_AUTH_TOKEN: ui.tokenInput.value,
     ANTHROPIC_CUSTOM_HEADERS: ui.headersInput.value
   };
@@ -466,6 +470,10 @@ ui.resetBtn.addEventListener('click', async () => {
   const keys = [
     'ANTHROPIC_BASE_URL',
     'ANTHROPIC_MODEL',
+    'ANTHROPIC_DEFAULT_HAIKU_MODEL',
+    'ANTHROPIC_DEFAULT_SONNET_MODEL',
+    'ANTHROPIC_DEFAULT_OPUS_MODEL',
+    'ANTHROPIC_API_KEY',
     'ANTHROPIC_AUTH_TOKEN',
     'ANTHROPIC_CUSTOM_HEADERS'
   ];
@@ -505,7 +513,16 @@ async function init() {
     const env = await window.api.getEnv();
 
     let hasEnv = false;
-    if (env.ANTHROPIC_BASE_URL || env.ANTHROPIC_MODEL || env.ANTHROPIC_AUTH_TOKEN || env.ANTHROPIC_CUSTOM_HEADERS) {
+    if (
+      env.ANTHROPIC_BASE_URL ||
+      env.ANTHROPIC_MODEL ||
+      env.ANTHROPIC_DEFAULT_HAIKU_MODEL ||
+      env.ANTHROPIC_DEFAULT_SONNET_MODEL ||
+      env.ANTHROPIC_DEFAULT_OPUS_MODEL ||
+      env.ANTHROPIC_API_KEY ||
+      env.ANTHROPIC_AUTH_TOKEN ||
+      env.ANTHROPIC_CUSTOM_HEADERS
+    ) {
       hasEnv = true;
     }
 
