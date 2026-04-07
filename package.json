@@ -1,6 +1,6 @@
 {
   "name": "claude-code-profile-switcher",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "A cross-platform desktop application to easily switch between different Claude Code profiles (API providers and models).",
   "main": "dist/main.js",
   "scripts": {

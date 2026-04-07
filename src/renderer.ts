@@ -22,6 +22,13 @@ interface Model {
   pricing?: ModelPricing;
 }
 
+interface FilterModelOptions {
+  baseUrl?: string;
+  authToken?: string;
+  customHeaders?: string;
+  refresh?: boolean;
+}
+
 interface Window {
   api: {
     getProviders: () => Promise<Provider[]>;
@@ -107,7 +114,27 @@ function extractModelInfo(m: Model) {
   return { context: formatCompactNumber(context), inputPrice: priceIn, outputPrice: priceOut };
 }
 
-function filterModels(query: string): Model[] {
+async function filterModels(query: string, options?: FilterModelOptions): Promise<Model[]> {
+  if (options?.refresh) {
+    const baseUrl = (options.baseUrl || '').trim();
+    if (!baseUrl) {
+      models = [];
+      ui.modelDropdown.classList.add('hidden');
+      isModelDropdownOpen = false;
+      return [];
+    }
+
+    const provider: Provider = {
+      name: currentProvider?.name || 'Custom Config',
+      baseUrl,
+      model: ui.modelSearch.value.trim(),
+      authToken: (options.authToken || '').trim(),
+      customHeaders: (options.customHeaders || '').trim()
+    };
+
+    await fetchModels(provider, false);
+  }
+
   const trimmed = (query || '').trim();
   if (!trimmed) return models;
   const terms = trimmed
@@ -370,9 +397,27 @@ ui.modelSearch.addEventListener('click', () => {
   ui.modelSearch.select();
 });
 
-ui.modelSearch.addEventListener('input', (e: any) => {
+ui.baseUrlInput.addEventListener('blur', () => {
+  void filterModels(ui.modelSearch.value, {
+    baseUrl: ui.baseUrlInput.value,
+    authToken: ui.tokenInput.value,
+    customHeaders: ui.headersInput.value,
+    refresh: true
+  });
+});
+
+ui.tokenInput.addEventListener('blur', () => {
+  void filterModels(ui.modelSearch.value, {
+    baseUrl: ui.baseUrlInput.value,
+    authToken: ui.tokenInput.value,
+    customHeaders: ui.headersInput.value,
+    refresh: true
+  });
+});
+
+ui.modelSearch.addEventListener('input', async (e: any) => {
   const query = e.target.value;
-  const filtered = filterModels(query);
+  const filtered = await filterModels(query);
   modelSelectedIndex = -1;
   renderModelList(filtered);
   if (models.length > 0) ui.modelDropdown.classList.remove('hidden');
