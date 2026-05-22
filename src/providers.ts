@@ -13,7 +13,7 @@ export const DEFAULT_PROVIDERS: Provider[] = [
   {
     name: 'OpenCode',
     baseUrl: 'https://opencode.ai/zen',
-    model: 'minimax-m2.5-free',
+    model: 'big-pickle',
     authToken: 'public',
     customHeaders: 'x-opencode-session: 1',
   },
